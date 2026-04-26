@@ -3,3 +3,4 @@ SCREEN_HEIGHT = 720
 PLAYER_RADIUS = 20
 LINE_WIDTH = 2
 PLAYER_TURN_SPEED = 300  # Degrees per second
+PLAYER_SPEED = 200  # Pixels per second
