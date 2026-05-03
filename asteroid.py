@@ -1,5 +1,6 @@
 import pygame
 from circleshape import CircleShape
+from scoring_system import ScoringSystem
 import constants
 from logger import log_event
 import random
@@ -15,6 +16,7 @@ class Asteroid(CircleShape):
         self.position += self.velocity * dt
 
     def split(self):
+        ScoringSystem.update_score(self.radius)
         self.kill()
         if self.radius <= constants.ASTEROID_MIN_RADIUS:
             return
