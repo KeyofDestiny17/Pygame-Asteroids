@@ -6,7 +6,6 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
-from scoring_system import ScoringSystem
 
 def main():
     pygame.init()
@@ -41,9 +40,7 @@ def main():
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 log_event("player_hit")
-                print("Game over!")
-                ScoringSystem.print_score()
-                sys.exit()
+                player.respawn(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         for sprite in drawable:
             sprite.draw(screen)
         pygame.display.flip()

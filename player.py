@@ -2,12 +2,15 @@ import pygame
 from circleshape import CircleShape
 import constants
 from shot import Shot
+import sys
+from scoring_system import ScoringSystem
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, constants.PLAYER_RADIUS)
         self.rotation = 0
         self.shot_cooldown_timer = 0
+        self.lives = constants.STARTING_LIVES
         
         # in the Player class
     def triangle(self):
@@ -53,3 +56,15 @@ class Player(CircleShape):
         self.shot_cooldown_timer = constants.PLAYER_SHOOT_COOLDOWN_SECONDS
         shot = Shot(self.position.x, self.position.y, constants.SHOT_RADIUS)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * constants.PLAYER_SHOT_SPEED
+
+    def respawn(self, x, y):
+        if self.lives <= 0:
+            print("GAME OVER")
+            ScoringSystem.print_score()
+            sys.exit()
+        Player.kill(self)
+        self.lives -= 1
+        print(f"Player hit! Lives remaining: {self.lives}")
+        if constants.RESPAWN_TIMER_SECONDS > 0:
+            pygame.time.wait(int(constants.RESPAWN_TIMER_SECONDS * 1000))
+        new_player = Player(x, y)
