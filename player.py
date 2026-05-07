@@ -11,6 +11,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.shot_cooldown_timer = 0
         self.lives = constants.STARTING_LIVES
+        self.visible = True
+        self.respawn_timer = 0
         
         # in the Player class
     def triangle(self):
@@ -22,13 +24,20 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), constants.LINE_WIDTH)
+        if self.visible:
+            pygame.draw.polygon(screen, "white", self.triangle(), constants.LINE_WIDTH)
 
     def rotate(self, dt):
         self.rotation += constants.PLAYER_TURN_SPEED * dt
         return self.rotation
     
     def update(self, dt):
+        if self.respawn_timer > 0:
+            self.respawn_timer -= dt
+            if self.respawn_timer <= 0:
+                self.visible = True
+            return
+        
         keys = pygame.key.get_pressed()
     
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
@@ -57,14 +66,16 @@ class Player(CircleShape):
         shot = Shot(self.position.x, self.position.y, constants.SHOT_RADIUS)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * constants.PLAYER_SHOT_SPEED
 
-    def respawn(self, x, y):
+    def respawn(self, x, y): # With the help of Boots the ai from Boot.Dev
+        self.lives -= 1
+        
         if self.lives <= 0:
             print("GAME OVER")
             ScoringSystem.print_score()
             sys.exit()
-        Player.kill(self)
-        self.lives -= 1
-        print(f"Player hit! Lives remaining: {self.lives}")
-        if constants.RESPAWN_TIMER_SECONDS > 0:
-            pygame.time.wait(int(constants.RESPAWN_TIMER_SECONDS * 1000))
-        new_player = Player(x, y)
+        self.visible = False
+        self.respawn_timer = constants.RESPAWN_TIMER_SECONDS
+        print(f"You've been hit! Respawning... Lives remaining: {self.lives}")
+        self.position = pygame.Vector2(x, y)
+        self.velocity = pygame.Vector2(0, 0)
+        self.rotation = 0
