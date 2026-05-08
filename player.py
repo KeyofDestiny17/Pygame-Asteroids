@@ -13,6 +13,8 @@ class Player(CircleShape):
         self.lives = constants.STARTING_LIVES
         self.visible = True
         self.respawn_timer = 0
+        self.invulnerable = False
+        self.invulnerable_timer = 0
         
         # in the Player class
     def triangle(self):
@@ -24,8 +26,13 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        if self.visible:
-            pygame.draw.polygon(screen, "white", self.triangle(), constants.LINE_WIDTH)
+        if not self.visible:
+            return
+        
+        if self.invulnerable and int(self.invulnerable_timer * 10) % 2 == 0:
+            return
+        
+        pygame.draw.polygon(screen, "white", self.triangle(), constants.LINE_WIDTH)
 
     def rotate(self, dt):
         self.rotation += constants.PLAYER_TURN_SPEED * dt
@@ -36,8 +43,15 @@ class Player(CircleShape):
             self.respawn_timer -= dt
             if self.respawn_timer <= 0:
                 self.visible = True
+                self.invulnerable = True
+                self.invulnerable_timer = constants.INVULNERABILITY_TIMER_SECONDS
             return
         
+        if self.invulnerable_timer > 0:
+            self.invulnerable_timer -= dt
+            if self.invulnerable_timer <= 0:
+                self.invulnerable = False
+
         keys = pygame.key.get_pressed()
     
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
@@ -73,6 +87,7 @@ class Player(CircleShape):
             print("GAME OVER")
             ScoringSystem.print_score()
             sys.exit()
+        
         self.visible = False
         self.respawn_timer = constants.RESPAWN_TIMER_SECONDS
         print(f"You've been hit! Respawning... Lives remaining: {self.lives}")

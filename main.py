@@ -38,9 +38,10 @@ def main():
                     asteroid.split()
                     shot.kill()
         for asteroid in asteroids:
-            if player.collides_with(asteroid):
-                log_event("player_hit")
-                player.respawn(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+            if player.visible and not player.invulnerable:
+                if player.collides_with(asteroid):
+                    log_event("player_hit")
+                    player.respawn(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         for sprite in drawable:
             sprite.draw(screen)
         pygame.display.flip()
