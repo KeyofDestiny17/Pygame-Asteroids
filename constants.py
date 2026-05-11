@@ -18,3 +18,5 @@ STARTING_LIVES = 3
 MAX_LIVES = 5
 RESPAWN_TIMER_SECONDS = 3 # Time in seconds
 INVULNERABILITY_TIMER_SECONDS = 2 # Time in seconds, temporary until death blossom is implemented likely when I make bombs
+
+doing this because i need to push something now
